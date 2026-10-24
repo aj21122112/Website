@@ -1,0 +1,761 @@
+
+:root {
+  --nav-height: 7rem;   /* 3x the original 3.5rem */
+
+  /* page palette, shared by the lists below */
+  --ink: #1f2a37;       /* body + heading text */
+  --teal: #2f7f79;      /* caption color */
+  --sun: #f0cf8a;       /* photo border yellow */
+}
+
+
+ul{
+    display: flex;
+    flex-direction: row;
+    list-style-type:none;
+    justify-content: left;
+    gap: 20px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f7f5f0;
+  color: #1f2a37;
+}
+
+/* Header spans the page; the name block fills only the left half */
+.site-header {
+  display: flex;
+  min-height: 100vh; /* remove or shrink if you want a shorter header */
+}
+
+.name-block {
+  width: 50%;                /* left half of the page */
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* horizontal centering */
+  justify-content: center;   /* vertical centering */
+  text-align: center;
+}
+
+.name {
+  display: flex;
+  flex-direction: column;    /* first name on top, last name below */
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  line-height: 1.05;
+  color: #1f2a37;
+}
+
+.caption {
+  margin-top: 1.25rem;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  letter-spacing: 0.04em;
+  color: #2f7f79;            /* different color from the name */
+}
+
+/* Stack full-width on small screens so the name isn't cramped */
+@media (max-width: 600px) {
+  .name-block {
+    width: 100%;
+  }
+}
+
+/* Right half: two circular photos, centered, nudged left */
+.photo-block {
+  width: 50%;                /* right half of the page */
+  display: flex;
+  align-items: center;       /* vertical centering */
+  justify-content: center;   /* horizontal centering */
+  padding-right: 10%;        /* pushes the photos a bit to the left */
+}
+ 
+.photo-stack {
+  --size: clamp(200px, 26vw, 400px);   /* diameter of the large circle */
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  /* the extra pictures stick out to the right, so reserve that space
+     to keep the whole cluster centered in the right half */
+  margin-right: calc(var(--size) * 0.395);
+}
+ 
+.photo {
+  display: block;
+  aspect-ratio: 1 / 1;       /* keeps each crop a perfect circle */
+  object-fit: cover;         /* crops the image to fill the circle */
+  border-radius: 50%;
+  background: #f0cf8a;       /* shows if an image hasn't loaded */
+  border: 6px solid #f0cf8a;
+}
+ 
+.photo-main {
+  position: relative;
+  z-index: 4;                /* on top of everything */
+  width: 100%;
+  height: 100%;
+}
+ 
+/* Picture 1: bottom right, tucked under the main picture */
+.photo-one {
+  position: absolute;
+  z-index: 3;
+  width: 35%;
+  height: 35%;
+  top: 76%;
+  left: 76%;
+  border-width: 4px;
+}
+ 
+/* Picture 2: directly right of the main, ~55% of its size,
+   overlapped by the main picture and picture 1 */
+.photo-two {
+  position: absolute;
+  z-index: 2;
+  width: 55%;
+  height: 55%;
+  top: 32.5%;
+  left: 84.5%;
+  border-width: 5px;
+}
+ 
+/* Picture 3: top right, ~40% of the main's size,
+   underneath all the others */
+.photo-three {
+  position: absolute;
+  z-index: 1;
+  width: 40%;
+  height: 40%;
+  top: 0%;
+  left: 83%;
+  border-width: 4px;
+}
+ 
+
+/* Navigation banner: spans the page, no boxes around links */
+.site-nav {
+  position: sticky;          /* sits below the header, then sticks to the top */
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-evenly;   /* even spacing across the full width */
+  align-items: center;             /* links centered vertically */
+  min-height: var(--nav-height);
+  padding: 0 1rem;
+  background: #1c7a7f;       /* teal banner */
+}
+ 
+.site-nav a {
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: #e3f4f2;
+  transition: color 0.2s ease;
+  position: relative;        /* anchors the animated line */
+  padding-bottom: 0.35rem;
+}
+ 
+/* The line: hidden by default, grows left to right on hover,
+   then fades out (and resets) when the hover ends */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  /* on hover end: fade out first, then snap back to zero width */
+  transition: opacity 0.4s ease, transform 0s linear 0.4s;
+}
+ 
+.site-nav a:hover::after,
+.site-nav a:focus-visible::after {
+  transform: scaleX(1);
+  opacity: 1;
+  /* on hover start: draw the line left to right */
+  transition: transform 0.35s ease, opacity 0.1s ease;
+}
+ 
+/* Current page: its line stays visible */
+.site-nav a[aria-current="page"] {
+  color: #ffffff;
+}
+ 
+.site-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+ 
+.site-nav a:hover {
+  color: #ffffff;            /* slight brighten on hover */
+}
+ 
+.site-nav a:focus-visible {
+  outline: none;             /* keyboard focus shows the line instead of a box */
+}
+
+
+
+/* Text section below the banner */
+.content {
+  max-width: 44rem;          /* keeps lines a comfortable length */
+  margin: 0 auto;            /* centers the block on the page */
+  padding: 4.5rem 1.5rem 6rem;
+  color: #1f2a37;
+}
+ 
+.content-title {
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  line-height: 1.15;
+  color: #1f2a37;
+}
+ 
+
+.content p {
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin-bottom: 50px;
+  color: #1f2a37;
+}
+ 
+.content p + p {
+  margin-top: 1.25rem;
+}
+
+
+/* ---------- Lists (hobbies, bands, teams) ---------- */
+
+/* Sub-headings use the same Playfair as the page's other headings.
+   Bold comes from the browser default, like .content-title. */
+.content-sub-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  margin: 2.5rem 0 1rem;
+  color: var(--ink);
+}
+
+/* Karla for every list item, same as body text */
+.content-sub-title + ul li,
+.content-sub-title + ol li {
+  font-family: "Karla", Arial, sans-serif;
+}
+
+/* Reset the site-wide ul rule (flex row, 20px gap) for these lists */
+.content-sub-title + ul,
+.content-sub-title + ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hobbies: pills in the same yellow as the photo borders */
+.content-sub-title:nth-of-type(1) + ul {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.content-sub-title:nth-of-type(1) + ul li {
+  background: var(--sun);
+  color: var(--ink);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+/* Bands: a festival-bill lineup. No ranking, so no numbers;
+   size and weight do the work, slashes in the caption teal */
+.content-sub-title:nth-of-type(2) + ul {
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0;
+  font-size: clamp(1.25rem, 3.2vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.content-sub-title:nth-of-type(2) + ul li + li::before {
+  content: "/";
+  margin: 0 0.6em;
+  font-weight: 400;
+  color: var(--teal);
+}
+
+/* Teams: this list is ranked, so the numbers stay. Dark text, thin dark
+   border, team colors on the left stripe and numeral. Rows shrink down the ranking. */
+.content-sub-title:nth-of-type(3) + ol {
+  counter-reset: rank;
+  display: grid;
+  gap: 0.5rem;
+  max-width: 30rem;
+}
+.content-sub-title:nth-of-type(3) + ol li {
+  counter-increment: rank;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--ink);
+  border-radius: 0.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: inset 0.5rem 0 0 var(--team-color);
+  padding: var(--row-pad) 1.1rem var(--row-pad) 1.5rem;
+  font-size: var(--row-size);
+}
+.content-sub-title:nth-of-type(3) + ol li::before {
+  content: counter(rank);
+  min-width: 1.2ch;
+  font-size: 1.6em;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--team-color);
+}
+.content-sub-title:nth-of-type(3) + ol li:nth-child(1) {
+  --team-color: #aa0000;  /* 49ers */
+  --row-pad: 1.15rem; --row-size: 1.4rem;
+}
+.content-sub-title:nth-of-type(3) + ol li:nth-child(2) {
+  --team-color: #1d428a;  /* Warriors */
+  --row-pad: 0.9rem; --row-size: 1.25rem;
+}
+.content-sub-title:nth-of-type(3) + ol li:nth-child(3) {
+  --team-color: #132257;  /* Spurs */
+  --row-pad: 0.7rem; --row-size: 1.15rem;
+}
+
+
+/* ---------- CV page ---------- */
+ 
+.cv-section {
+  margin-top: 3.5rem;
+  scroll-margin-top: var(--nav-height);   /* anchor links land just below the nav */
+}
+ 
+/* Sticks under the nav while its section is on screen. Because a sticky
+   element can't leave its parent, it scrolls away as the section ends and
+   the next section's heading takes over. */
+.cv-section-title {
+  position: sticky;
+  top: var(--nav-height);
+  z-index: 5;                  /* below the nav (10), above the content */
+  background: #f7f5f0;         /* same as body, so content doesn't show through */
+  margin-bottom: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--teal);   /* same 2px line weight as the nav underline */
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.15;
+  color: var(--ink);
+}
+ 
+/* Skills: titled groups, each with a wrapping row of outlined pills */
+.cv-skill-group + .cv-skill-group {
+  margin-top: 1.75rem;
+}
+ 
+.cv-group-title {
+  margin-bottom: 0.75rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.15;
+  color: var(--ink);
+}
+ 
+.cv-skill-list {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+ 
+.cv-skill-list li {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--teal);
+  border-radius: 999px;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+ 
+/* Entries: used by education, work experience and awards */
+.cv-entry + .cv-entry {
+  margin-top: 2rem;
+}
+ 
+.cv-entry-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.25rem 1.5rem;
+}
+ 
+.cv-entry-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+ 
+.cv-entry-dates {
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--teal);
+}
+ 
+.cv-entry-org,
+.cv-entry-detail {
+  margin-top: 0.25rem;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+ 
+.cv-entry-org {
+  font-weight: 700;
+}
+ 
+/* Duties list: real bullets (overrides the site-wide flex ul) */
+.cv-duties {
+  display: block;
+  margin-top: 0.75rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+ 
+.cv-duties li {
+  padding-left: 0.25rem;
+}
+ 
+.cv-duties li + li {
+  margin-top: 0.35rem;
+}
+ 
+.cv-duties li::marker {
+  color: var(--teal);
+}
+
+
+/* Optional certificate image under an award/certification entry */
+.cv-certificate {
+  margin-top: 1rem;
+}
+ 
+.cv-certificate a {
+  display: block;
+  width: 100%;
+  max-width: 28rem;            /* raise or lower to taste */
+  margin: 0 auto;              /* centers the image in the page column */
+  line-height: 0;              /* no stray gap under the image */
+}
+ 
+.cv-certificate img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--ink);
+  border-radius: 0.25rem;
+}
+
+
+
+/* ---------- Projects page ---------- */
+ 
+.project-list {
+  display: grid;
+  gap: 1rem;
+}
+ 
+/* Each link is a full-width card (as wide as the .content column) */
+.project-link {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--ink);      /* straight lines only: no sides, no rounded corners */
+  border-bottom: 1px solid var(--ink);
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+ 
+.project-link-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+ 
+.project-link-caption {
+  margin-top: 0.4rem;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--teal);
+}
+ 
+/* Hover/keyboard focus: brighten and grow very slightly */
+.project-link:hover,
+.project-link:focus-visible {
+  background-color: #ffffff;       /* brighter than the page's #f7f5f0 */
+  transform: scale(1.01);
+}
+ 
+.project-link:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+ 
+@media (prefers-reduced-motion: reduce) {
+  .project-link {
+    transition: background-color 0.2s ease;
+  }
+  .project-link:hover,
+  .project-link:focus-visible {
+    transform: none;
+  }
+}
+
+ 
+.pdf-embed {
+  margin: 1.5rem 0;
+}
+
+.pdf-embed object {
+  display: block;
+  width: 100%;
+  height: 80vh;
+  min-height: 30rem;
+  border: 1px solid var(--ink);      /* same thin border as the other boxes */
+  border-radius: 0.25rem;
+}
+
+.pdf-embed a {
+  color: var(--teal);
+}
+
+.content-flush {
+  max-width: none;             /* drop the 44rem column */
+  padding: 0;                  /* no gap under the nav, none at the sides */
+}
+ 
+.content-flush .pdf-embed {
+  margin: 0;
+}
+ 
+.content-flush .pdf-embed object {
+  width: 100%;
+  border-left: 0;              /* no side lines at the page edges */
+  border-right: 0;
+  border-radius: 0;
+}
+
+
+/* ---------- Article page: paragraphs and captioned images ---------- */
+ 
+/* One image, full column width; the caption sits under it at the same width */
+.content-figure {
+  margin: 0 0 50px;              /* same rhythm as .content p */
+}
+ 
+.content-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+ 
+.content-figure figcaption {
+  margin-top: 0.4rem;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 0.85rem;            /* much smaller than the 1.15rem body text */
+  line-height: 1.4;
+  color: #4b5563;
+}
+ 
+/* Two images side by side, each with its own caption underneath */
+.content-figure-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;            /* captions sit right under each image, even if heights differ */
+  gap: 1.5rem;
+  margin-bottom: 50px;
+ 
+  /* Wider than the 44rem text column, centered on the page.
+     Change 56rem to make the pair bigger or smaller. */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(56rem, 100vw - 3rem);   /* never wider than the screen minus side margins */
+}
+ 
+.content-figure-pair .content-figure {
+  margin-bottom: 0;
+}
+ 
+/* Stack the pair on small screens */
+@media (max-width: 600px) {
+  .content-figure-pair {
+    grid-template-columns: 1fr;
+  }
+}
+ 
+/* ---------- Raw code link (bottom of article pages) ---------- */
+
+.code-link {
+  margin-top: 3.5rem;
+}
+
+.code-link a {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--ink);      /* same straight-line look as .project-link */
+  border-bottom: 1px solid var(--ink);
+  text-decoration: none;
+  color: var(--ink);
+  transition: background-color 0.2s ease;
+}
+
+.code-link-title {
+  display: block;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.code-link-title::after {
+  content: " \2192";                     /* small arrow */
+  color: var(--teal);
+}
+
+
+.code-link a:hover,
+.code-link a:focus-visible {
+  background-color: #ffffff;
+}
+
+.code-link a:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+
+/* ---------- Image lightbox ---------- */
+
+/* Images that can be expanded */
+.content img {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;                      /* above the sticky nav (10) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3.5rem 1rem 1.5rem;
+  background: rgba(31, 42, 55, 0.92);   /* --ink, mostly opaque */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease;
+}
+
+.lightbox-img {
+  display: block;
+  max-width: 94vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  border: 1px solid var(--sun);
+  border-radius: 0.25rem;
+  background: #f7f5f0;
+  cursor: default;
+}
+
+.lightbox-caption {
+  max-width: 44rem;
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: center;
+  color: #e3f4f2;
+}
+
+.lightbox-caption:empty {
+  display: none;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--ink);
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus-visible {
+  background: #ffffff;
+}
+
+.lightbox-close:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox.is-open {
+    transition: none;
+  }
+}
+
+
+/* ---------- Image borders ---------- */
+
+img:not(.photo):not(.lightbox-img) {
+  border: 1px solid var(--ink);
+  border-radius: 0.5rem;
+}
