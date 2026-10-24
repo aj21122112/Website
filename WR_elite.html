@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Austen Jack Project Samples</title>
+    <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+
+<body>
+    
+    <nav class="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="cv.html">CV</a>
+        <a href="project_samples.html" aria-current="page">Project Samples</a>
+        <a href="biography.html">Biography</a>
+    </nav>
+
+
+  <main class="content">
+    <h1 class="content-title">NFL Wide Receivers: When Are They Good?</h1>
+    
+    <h2 class="content-title">Abstract</h2>
+    <p>An “elite” season for an NFL wide receiver may be defined as having either 1000+ receiving yards or 100+ receptions. When selecting players in a draft (real or fantasy) it’s a high concern of the team drafting when or whether a WR will have an elite season. In this report, it’s found that the biggest determinants of a WRs likelihood of having elite production are their draft position (in the actual real-life NFL draft) and the number of years they’ve played in the NFL. These two predictors can be used to model the probabilities for an elite season given a WR draft position and the year of their career in question. Generally, higher draft picks have higher odds of having elite seasons, and such seasons occur earlier in their careers. Lower draft picks have substantially lower odds of an elite season overall, and usually occur later in their careers than high draft picks.</p>
+
+    <h2 class="content-title">Introduction</h2>
+    <p>NFL wide receivers are not just judged by being good at running fast and catching balls, but also for how their career progresses. This is true of all NFL players, but some have exceedingly higher expectations than others. A first-round WR may be expected to perform at a high level almost immediately, whereas a 7th round pick may not be expected to even make the final 53-man roster. But is this discrepancy in expectations warranted? Intuitively, this makes the most sense. NFL scouts and general managers are not nearly as simple-minded as the general football fandom would have us believe. Higher draft picks ought to be better wide receivers than their lower draft pick counterparts. However, it’s hard not to ignore the outliers at either end: the obscenely hyped-up first-round bust, and the come-from-nowhere late-round gem. These are the instances that have many football viewers believe the front offices of NFL teams have absolutely no clue what their actually doing and just flipping a coin on every pick. And to some degree, that critique is correct. Every pick has the possibility of being really good, really bad, or average. The goal then becomes to determine what that possibility actually is.</p>
+    <p>One thing is abundantly clear, good WRs get drafted earlier. The rest of their careers remain to be seen if they are indeed good, but for the most part that’s where you’ll find all the best wideouts. General managers and fans don’t want just a good receiver, they want an elite receiver. The kind of guys that walk up to the line of scrimmage and force the opponent to put two corners directly on them to force any other offensive player to make a play. True menaces whose game-winning grabs haunt DBs for the rest of their lives. That’s who teams want to pick, and they have all of 262 chances to find them.</p>
+    <p>The biggest issue is there are far too many variables and randomness at play in football to ever be able to make an accurate prediction about any given season, game, play, player, score, etc. A WR might be incredible in college, end up in the pros and completely fall off the map. This could be due to having a great quarterback giving them easy catches, a genius coach that schemes them open, poor competition they can just run right passed, no other options on their own team so they get all the targets, and so on. So many confounding variables within and outside a team make it nearly impossible to pinpoint whether or not a WR will eventually have a good NFL season.</p>
+    <p>The goal of this analysis is to find out exactly what chances a WR has of having an elite season given their draft position and career experience, since those are two things that are absolutely definite from the perspective of a fan without much data or a fully staffed analytics team.</p>
+   
+   
+    <h2 class="content-title">What Actually Matters?</h2>
+    <p>For the first part of this analysis we need to determine if age, career experience, or draft position even matter with respect to elite WR production. It’s entirely possible none of them do and we can just stop here and find a movie to watch or something.</p>
+    <p>Before we can do that we need to gather a few things. First, all stats and information will be collected from the nflreadr package in R. From there, we’ll grab information and stats from WRs over the past 20 yearrs (2006-2025), and set up the data so that we have age, draft pick, receiving yards, etc. For the sake of simplifying the analysis undrafted WRs will NOT be included. Yes, there are many undrafted WRs who go on to have exceptional careers, but without them having a draft number they’d all need to be assigned a dummy value, and because there’s so many of them they’ll skew the data. So we’re only considering WRs who are drafted for the remainder of the analysis. The end result is a data frame with every drafted receiver for each season from 2006 to 2025 with their age, number of years in the NFL, draft pick, and draft round.</p>
+    <figure class="content-figure">
+      <img src="WR_images/wr_plot.png" alt="WR Stats Plot">
+      <figcaption>Fig 1. Counts of drafted WRs by age during 2006-2025, counts of drafted WRs by years of NFL experience, receiving yards per game vs age, and rec yards per game vs years of NFL experience. Counts by age peaks around 25 years old, counts by years in the NFL peaks around 2 years, very little visible correlation between age and experience against receiving yards per game.</figcaption>
+    </figure>
+    <p>Once we have all our players and stats, they’re separated into groups: elite and non-elite. We’re assigning “elite” to any receiver that has 1000+ receiving yards or 100+ catches in a given season. It’s extremely rare that a receiver have one of those without the other, but it does happen. All other WRs are considered non-elite for the given season. Then we’ll visualize how many elite receivers are in each age group, years of NFL experience, and where they are in the draft.</p>
+
+    <figure class="content-figure">
+      <img src="WR_images/elite_wr_plot.png" alt="Elite WR Stats Plot">
+      <figcaption>Fig 2. Same metrics as in figure 1 but for only the WR seasons that mee the criteria for elite.</figcaption>
+    </figure>
+
+    <p>It’s hard to see exactly how the distributions of elite WRs compare to non-elite, so next they’ll be directly compared against each other.</p>
+
+    <figure class="content-figure">
+      <img src="WR_images/elite_v_non-e_age.png" alt="Elite vs Non-elite WR ages">
+      <figcaption>Fig 3. Distribution of ages within groups of elite and non-elite WRs. Elite WRs have a mean age of 26.4 years and non-elite WRs have a mean age of 26.1 years. The difference between the means is .3 years.</figcaption>
+    </figure>
+
+    <p>There are far more non-elite receivers than there are elite, so this histogram is showing the proportion of each age within the two groups so that they can be more easily compared visually. Mean age of elite receivers is 26.4 and mean age of non-elite receivers is 26.1. Elite WRs are slightly older but by the smallest of margins. A  Welch’s T-test to determine significant difference between the means give the following results: t-statistic = 1.7881, degrees of freedom = 497.11, and p-value = .0743. At the p < .05 level, this would fail to reject the null hypothesis that there is no difference between mean ages of elite and non-elite WRs. This does make sense looking at the graph. The two groups have fairly separate peaks, but not nearly enough to look particularly substantial. </p>
+
+    <figure class="content-figure">
+      <img src="WR_images/elite_v_non-e_years.png" alt="Elite vs Non-elite WR years in NFL">
+      <figcaption>Fig 4. Distribution of years played in the NFL within groups of elite and non-elite WRs. Elite WRs have a mean years in the NFL of 4.2 years and non-elite WRs have a mean age of 3.5 years. The difference between the means is .7 years.</figcaption>
+    </figure>
+
+    <p>When comparing league experience, there’s a slightly larger game between the means and the ditributions of the two groups look much different. The elite distribution looks like a Bayesian distribution, while the non-elite peaks at 0 and 1 years of experience in the NFL. The Welch’s T-test gives results: t-statistic = 3.779, degrees of freedom = 501.6, and p-value = .0001. This is a very significant difference at the p < .05, and rejects the null hypothesis. This IS a significant difference between mean years spent in the NFL between elite and non-elite WRs. This variable will be used later for making the regression model. Finally, we’ll do the same comparison of exact draft pick and draft rounds.</p>
+    
+    <div class="content-figure-pair">
+      <figure class="content-figure">
+        <img src="WR_images/elite_v_non-e_round.png" alt="Elite vs Non-elite WR Draft Rounds">
+        <figcaption>Fig 5. Distribution of elite and non-elite WRs across rounds of the NFL draft. Mean draft round of elite receivers is 2.2, and mean draft round of non-elite receivers is 3.1. The vast majority of elite WRs are draft in the 1st round with rounds 2 and 3 combining for about the same amount.</figcaption>
+      </figure>
+ 
+      <figure class="content-figure">
+        <img src="WR_images/elite_v_non-e_pick.png" alt="Elite vs Non-elite WR Draft Pick">
+        <figcaption>Fig 6. Distributions of elite and non-elite WRs across all picks of the NFL draft. The mean draft pick of an elite WR is 57.6, and the mean draft  pick of a non-elite WR is 88.8. This is simply a  more granular view of figure 5.</figcaption>
+      </figure>
+    </div>
+
+    <p>The mean draft round and draft pick of the two groups show much higher different than the measure of age and experience. Mean elite draft round and pick are 2.2 and 57.6 respectively. Mean non-elite draft round and pick are 3.1 and 88.8. Welch’s T-tests give the following results: draft round) t-statistic = -8.7978, degrees of freedom = 507.15, p-value = 2.2e(-16); draft pick) t-statistic = -8.5347, df = 505.41, p-value = 2.2e(-16). The p-value is extremely significant at the p < 0.5 level, the null hypothesis is rejected. It’s also worth noting that the results of the Welch’s T-test for each of these comparisons are almost exactly the same, which makes sense because the distribution of draft picks is just a more granular view of the distribution of draft rounds. Statistically and visually elite receivers are found resoundingly earlier in the draft – maybe general managers know what they’re doing. </p>
+
+    <p>From these analyses the statistics that are most important for determining if a WR will have an elite season or not are draft pick and years spent in the NFL. Age has very minimal effect, so will be excluded from any predictive regression model. </p>
+
+    <h2 class="content-title">Regression Models</h2>
+    <p>If we build a regression model using this information we may be able to predict when a receiver has the highest chances of an elite season given their age, years spent in the NFL, and draft position. From the distributions we’ve visualized previously, we can learn a couple things about how to build a regression model for this data. First, the relationship between elite receivers and draft position is NOT linear, it’s more logarithmic. There’s a massive drop in elite receivers after round 1, then flattens out entirely after round 3. Second, the relationship between elite WRs and age/years in the league is also not linear, it’s parabolic. For our first model we’ll then use the terms yrs_in_league, yrs_in_league^2, and log(draft_pick). Draft pick we determined is logarithmic, hence using its log in the model, years in the league is correlated to elite production, and we know that the longer a player stays in the league passed their prime they will have lower chances of an elite season. Here’s the summary ouptut of the model:</p>
+
+     <figure class="content-figure">
+      <img src="WR_images/m2_summary.png" alt="First regression model summary">
+    </figure>
+
+    <p>All three predictors have a significant p-value, and their coefficients are what we expect. Years in the league has a positive relationship with elite WR seasons, years in the league squared has a negative relationship, which means elite seasons increase and then drop after reaching a peak (parabolic). Log draft pick also has a negative relationship, which is what we expect from looking at the draft position histograms from earlier. When running a given draft pick through this model for 0-12 years spent in the league, all these relationships are apparent.</p>
+
+    <figure class="content-figure">
+      <img src="WR_images/elite_prob_m1.png" alt="Regression Model 1 Probabilites">
+      <figcaption>Fig 7. Visualization of regression model predicting chances of an elite WR season over length of career for draft picks 5, 15, 32, 64, 100, 150, and 220.  Probability of an elite season is on the y-axis and years of NFL experience are on the x-axis. All peaks odds of an elite season are around 6 years in the NFL from this model.</figcaption>
+    </figure>
+
+    <p>Higher draft picks have the largest odds of having an elite season throughout their careers.  There’s a big issue with this model, all draft picks have the highest probability of an elite at the same point in their careers. This doesn’t happen in reality, higher draft picks will more likely have elite production earlier because if they didn’t they’d get cut or traded long before their 6th season. To improve the model to reflect this we’ll add an interaction between years and pick. </p>
+
+    <figure class="content-figure">
+      <img src="WR_images/m4_summary.png" alt="Second regression model summary">
+    </figure>
+
+    <p>The interaction terms in this new model are also significant, meaning log pick is correlated to years in the league and its square. The new visualization also reflects reality much more than the previous:</p>
+
+    <figure class="content-figure">
+        <img src="WR_images/elite_prob_m2.png" alt="Regression Model 2 Probabilites">
+        <figcaption>Fig 8. Visualization of regression model predicting chances of an elite WR season over length of career for draft picks 5, 15, 32, 64, 100, 150, and 220.  Probability of an elite season is on the y-axis and years of NFL experience are on the x-axis. The peak of a draft pick’s chances of having an elite season are dependent on where they are drafted. Earlier picks have peak odds earlier in their careers than later picks. </figcaption>
+    </figure>
+
+    <p>This model looks much more like what we’d expect, earlier draft picks have higher odds of an elite season earlier in their careers and later draft picks have their own highest odds later in their careers. Both of these models can be visualized further with heatmaps showing odds of an elite season for each of the 262 draft picks over the course of 12 years in the NFL.</p>
+
+    <div class="content-figure-pair">
+      <figure class="content-figure">
+        <img src="WR_images/m1_heatmap.png" alt="Model 1 Heatmap">
+        <figcaption>Fig 9. Heatmap of model 1. All odds of having an elite WR season of every draft pick over the course of 12 years. Highest odds are in the center (around 6 years) and within the first 25-30 draft picks.</figcaption>
+      </figure>
+ 
+      <figure class="content-figure">
+        <img src="WR_images/m2_heatmap.png" alt="Model 2 Heatmap">
+        <figcaption>Fig 10. Heatmap of model 2. Highest odds are in the top right where draft picks are higher and career years are lower.</figcaption>
+      </figure>
+    </div>
+
+    <p>The second model appears to reflect more of what we expect, especially if compared to the raw counts of elite seasons at each draft position and career years.</p>
+
+
+    <figure class="content-figure">
+      <img src="WR_images/counts_heatmap.png" alt="Heatmap Of Raw Counts of Elite Seasons by Draft Pick and Year in the League">
+      <figcaption>Fig 11. Raw counts of elite WR seasons for each draft pick and career year in the NFL. Highest counts of elite seasons are from draft picks within the first 50 picks and before their 6th year in the NFL.</figcaption>
+    </figure>
+
+    <p>The raw counts show most elite seasons come from early draft picks earlier in their careers. Highest density of elite seasons are in the top right of the heatmap, which is much closer to the odds heatmap produced by the second regression model. Of the two models, the second one is a much better predictor of elite WR seasons if a draft position and NFL experience are given as inputs.</p>
+    <p>Looking closely between the raw counts and the second model’s heatmap they don’t line up exactly. There are plenty of elite seasons that happen for picks 20-50 early in their careers, but the model heatmap gives higher odds later in the careers of such draft picks. This shows that the variables we’ve selected as predictors are likely not the best we could have chosen for this. That’s ok, however. The goal of this analysis was just to determine if there’s a way to find out when a receiver might have an elite season given only age, experience, and draft pick. We were able to determine correlation, and make a rough predictive model, which is more than enough to function as a jumping-off point for further analysis.</p>
+
+
+    <h2 class="content-title">Conclusions and Future Work</h2>
+    <p>It turns out general managers and scouts usually know what they’re doing when they trade up in the draft to get a first round receiver being billed as a generational talent. They may still end up being a bust or just not a generational talent, but that’s ok. The point is that when they do pick players that high, those are the players that have the best chances of having huge seasons. </p>
+    <p>The final model we produced wasn’t the best it could be, and to make a stronger one we’d need to find other variables with stronger correlation to elite production and/or career trajectories. Such variables could be colleges/conferences players played in before, skill level of the quarterback they’re playing with (which would also need to be quantified), combine metrics (40-yard dash, shuttle, catching drill times, etc), and many others. Regardless of which other variables might be incorporated into a new model they should be things that are as specific to the individual player as possible to limit noise from confounding variables.</p>
+    <p>Beyond just WRs, the same methods can be applied to all players. The steps are simple: identify what stat(s) make a player “elite”, find the variables that correlate strongest with players in the “elite” group vs the players in the “non-elite” group, then use the correlated variables to predict likelihood of elite production. That’s all, just three steps. The underlying methods are what are important about this analysis, not the actual results of this specific application. The same logic can be used for predictive modeling outside the context of the NFL or sports in general. As noted, it isn’t the best version of what it could be, but offers a place to start and gives rough results that point the direction toward the most optimal solution.</p>
+
+    <h2 class="content-title">Notes and Caveats</h2>
+    <h3 class="content-sub-title">Undrafted WRs</h3>
+    <p>No undrafted WRs are included in the analysis, even though there are many who go on to have good careers and even seasons that meet the criteria for elite. The issue is that since they don’t have a draft pick or round they all have to be assigned a dummy variable (like round 8 and/or pick 263). This will end up not making any sense in the rest of the data because then there’re hundreds of picks in the “8th” round and pick “263”. The data ends up extremely skewed and difficult to analyze. They were just kept out of the whole analysis just for the sake of simplicity.</p>
+
+    <h3 class="content-sub-title">Yards/Catches per Game vs Total Yards/Catches</h3>
+    <p>In terms of measuring a WRs ability, yards/catches per game (in a season) is a much better metric than total yards/catches in a season. Players may miss a few games or more due to injury and might miss the 1000 yard/100 catches marks not because of how good or bad they are but because of circumstances. I arbitrarily chose those two benchmarks because they’re frequently cited across NFL discourse as being significant for a season. Using the corresponding per-game metrics would likely have given a much stronger analysis, but that would have required defining an “elite” value for yards/catches per game. Once again, for simplicity I chose to stick with the raw totals of each stat in a season as the benchmark.</p>
+
+    <h3 class="content-sub-title">Consistent Elite Seasons</h3>
+    <p>Many elite seasons are actually just the same player playing at a high level year after year. If a later round pick happens to be a steal and turns out to be an elite player, they may single-handedly increase the probabilities of later-round picks chances of elite production any given season. For example, it may appear that ANY late-round pick has a 20% chance of being elite in their 5th year in the NFL, but that number may be inflated by a single player that strung together 4 elite seasons after getting drafted in the 5th round. This is another area the model can be cleaned up to give a stronger prediction for WR production, this analysis is just a jumping-off point for further work.</p>
+
+  </main>
+ 
+</body>
+</html>
