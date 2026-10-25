@@ -253,6 +253,7 @@ body {
 .content-sub-title + ul li,
 .content-sub-title + ol li {
   font-family: "Karla", Arial, sans-serif;
+  font-size: .75em;
 }
 
 /* Reset the site-wide ul rule (flex row, 20px gap) for these lists */
@@ -758,4 +759,52 @@ body {
 img:not(.photo):not(.lightbox-img) {
   border: 1px solid var(--ink);
   border-radius: 0.5rem;
+}
+
+/* ---------- Text + image side by side ---------- */
+
+/* Breaks out of the 44rem column the same way .content-figure-pair does */
+.content-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;           /* use "start" to top-align instead */
+  gap: 2rem;
+  margin-bottom: 50px;
+
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(56rem, 100vw - 3rem);
+}
+
+/* Flip: image first (left), text second (right) */
+.content-split--reverse .content-split-media {
+  order: -1;
+}
+
+.content-split .content-title {
+  margin-bottom: 1rem;
+}
+
+/* Tighter paragraph spacing than the page's 50px, since the block is narrower */
+.content-split-text p {
+  margin-bottom: 1.25rem;
+}
+
+.content-split-text p:last-child {
+  margin-bottom: 0;
+}
+
+.content-split .content-figure {
+  margin: 0;
+}
+
+/* Stack on small screens, text always first */
+@media (max-width: 600px) {
+  .content-split {
+    grid-template-columns: 1fr;
+  }
+  .content-split--reverse .content-split-media {
+    order: 0;
+  }
 }
