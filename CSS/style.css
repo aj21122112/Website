@@ -60,12 +60,6 @@ body {
   color: #2f7f79;            /* different color from the name */
 }
 
-/* Stack full-width on small screens so the name isn't cramped */
-@media (max-width: 600px) {
-  .name-block {
-    width: 100%;
-  }
-}
 
 /* Right half: two circular photos, centered, nudged left */
 .photo-block {
@@ -84,6 +78,7 @@ body {
   /* the extra pictures stick out to the right, so reserve that space
      to keep the whole cluster centered in the right half */
   margin-right: calc(var(--size) * 0.395);
+  flex-shrink: 0;
 }
  
 .photo {
@@ -831,5 +826,30 @@ img:not(.photo):not(.lightbox-img) {
   }
   .content-split--reverse .content-split-media {
     order: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .name-block {
+    width: 100%;
+    padding: 3rem 1rem 2rem;
+  }
+
+  .photo-block {
+    width: 100%;
+    padding: 0 0 3rem;      /* removes the 10% right padding that shifts it left */
+    justify-content: center;
+  }
+
+  .photo-stack {
+    flex-shrink: 0;
+    --size: clamp(160px, 55vw, 320px);   /* cluster is 1.395 x size, so max ~77vw */
+    /* keep the existing margin-right: it reserves room for the small circles,
+       so the whole cluster, not just the big circle, is what gets centered */
   }
 }
