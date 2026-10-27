@@ -5,7 +5,7 @@
   /* page palette, shared by the lists below */
   --ink: #1f2a37;       /* body + heading text */
   --teal: #2f7f79;      /* caption color */
-  --sun: #f0cf8a;       /* photo border yellow */
+  --sun: #c687fc;       /* photo border yellow */
 }
 
 
@@ -91,8 +91,8 @@ body {
   aspect-ratio: 1 / 1;       /* keeps each crop a perfect circle */
   object-fit: cover;         /* crops the image to fill the circle */
   border-radius: 50%;
-  background: #f0cf8a;       /* shows if an image hasn't loaded */
-  border: 6px solid #f0cf8a;
+  background: #1083a0;       /* shows if an image hasn't loaded */
+  border: 6px solid #1083a0;
 }
  
 .photo-main {
@@ -373,7 +373,7 @@ body {
 .cv-group-title {
   margin-bottom: 0.75rem;
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   line-height: 1.15;
   color: var(--ink);
 }
@@ -399,41 +399,60 @@ body {
 }
  
 .cv-entry-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.25rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;   /* left column flexes, right column fits its content */
+  grid-template-areas:
+    "title dates"
+    "org   location";
+  column-gap: 1.5rem;
+  row-gap: 0.25rem;
+  align-items: baseline;             /* each row's text lines up on its baseline */
 }
- 
-.cv-entry-title {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.25rem;
-  line-height: 1.25;
-  color: var(--ink);
-}
+
+.cv-entry-title    { grid-area: title; }
+
+.cv-entry-location { grid-area: location; text-align: right; }
  
 .cv-entry-dates {
+  grid-area: dates;
+  text-align: right;
   font-family: "Karla", Arial, sans-serif;
   font-size: 1.05rem;
   letter-spacing: 0.04em;
   white-space: nowrap;
   color: var(--teal);
 }
- 
+
+.cv-entry-dates time {
+  font: inherit;
+  color: inherit;
+}
+
+.cv-entry-org {
+  grid-area: org;
+  font-weight: 600;
+}
+
+
 .cv-entry-org,
 .cv-entry-detail {
-  margin-top: 0.25rem;
-  font-family: "Karla", Arial, sans-serif;
-  font-size: 1.15rem;
+  margin-top: 0;               /* was 0.25rem */
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1rem;
   line-height: 1.5;
   color: var(--ink);
 }
- 
-.cv-entry-org {
-  font-weight: 700;
+
+.cv-entry-location {
+  margin-top: 0;               /* was 0.15rem */
+  font-family: "Karla", Arial, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--teal);
 }
- 
+
 /* Duties list: real bullets (overrides the site-wide flex ul) */
 .cv-duties {
   display: block;
@@ -766,8 +785,8 @@ img:not(.photo):not(.lightbox-img) {
 /* Breaks out of the 44rem column the same way .content-figure-pair does */
 .content-split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;           /* use "start" to top-align instead */
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); /* text wider, image narrower */
+  align-items: center;
   gap: 2rem;
   margin-bottom: 50px;
 
@@ -777,9 +796,15 @@ img:not(.photo):not(.lightbox-img) {
   width: min(56rem, 100vw - 3rem);
 }
 
-/* Flip: image first (left), text second (right) */
-.content-split--reverse .content-split-media {
-  order: -1;
+.content-split .content-figure img {
+  max-width: 80%;
+  height: auto;
+  margin-inline: auto; /* or margin-right: auto to left-align */
+  display: block;
+}
+
+.content-split--reverse {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); /* image (left) narrow, text (right) wide */
 }
 
 .content-split .content-title {
