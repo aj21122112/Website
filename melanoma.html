@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOX10 In Melanoma</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="icon" href="images/favicon.png">
+</head>
+
+<body>
+    
+    <nav class="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="cv.html">CV</a>
+        <a href="project_samples.html" aria-current="page">Project Samples</a>
+        <a href="biography.html">Biography</a>
+    </nav>
+
+    <main class="content">
+        <h1 class="content-title">RNA-seq Analysis of Melanoma With Inhibited p300</h1>
+
+
+        <h2 class="content-title">Introduction</h2>
+
+        <p>In the paper <i>p300 KAT Regulates SOX10 Stability and Function in Human Melanoma</i> (from Cancer Research Communications and linked at the bottom of this page) by Waddell et al, SOX10, a transcription factor (TF), is found to be dependent on the function of lysine acetyltransferase p300. SOX10 is highly expressed in a variety of melanomas (melanocytic, transitory, and neural-crest-like phenotypes), and it plays a significant role in tumor growth and development. However, in melanomas where SOX10 has loss-of-function mutations, the melanomas may gain resistance to immunotherapies. This is somewhat contradictory – active SOX10 increases tumor growth and development, but inactive SOX10 can result in both increased resistance to therapies and tumor metastatic potential, presenting a dilemma for coming up with therapies for melanomas that are propagated by SOX10. Its activity promotes tumor growth but directly shutting it off is not a viable option.</p>
+        <p>To find a way to dampen melanoma development via the SOX10 pathway, the authors of this paper decided to find a regulator of SOX10 then measure the effects on the SOX10 pathway when inhibiting the regulator. P300 was identified as a mediator of the SOX10 pathway and measured the effects of inhibiting p300 with A-485 (a known inhibitor of p300). Shutting down the p300 co-regulator of SOX10 tests the potential for a different approach for a melanoma therapy that indirectly targets the SOX10 pathway.</p>
+    
+        <h2 class="content-title">Authors' Findings</h2>
+        <p><i>SOX10</i> (gene locus that codes SOX10 protein) and <i>EP300</i> (locus that codes p300 protein) are co-amplified in both UV-associated and acral melanomas. Waddell et al. found that the two loci are extremely close to each other (3Mb apart) on chromosome 22. They performed a knockdown (KD) experiment on p300 and saw lower expression of SOX10 and MITF (another TF in melanomas regulated by p300 activity). In the knockdown experiment A-485 was used to limit p300 activity and showed lower SOX10 and MITF protein expression. When performing RNA-seq, SOX10 transcription and expression were completely unchanged in the presence of A-485, but SOX10 protein levels were decreased. Without active p300, SOX10 proteins are targeted for proteasome-driven degradation, showing that p300 acetyltransferase activity stabilizes the SOX10 protein to maintain its activity and prevent degradation. Lower SOX10 protein levels leads to lower transcript levels of many of its downstream targets. </p>
+        <p>As I understand it, the primary SOX10 pathway/interaction with p300 is this: p300 and SOX10 are amplified together, p300 stabilizes and promotes SOX10 activity. Higher SOX10 activity leads to melanoma growth. Targeting SOX10 for loss-of-function can lead to higher melanoma invasion and metastasis due to SOX10 possibly having inhibitory properties on other cellular components and p300 possibly regulating SOX10 downstream targets in the absence of SOX10. Inhibiting p300 with A-485 induces SOX10 protein degradation AND inhibits activity of SOX10 downstream targets via p300 inhibition. Here’s a poorly drawn map of these interactions:</p>
+        
+        <figure class="content-figure">
+            <img src="melanoma_images/pathway.jpeg" alt="SOX10/p300 pathway">
+            <figcaption>SOX10/p300 interaction and pathway</figcaption>
+        </figure>
+        
+        <p>Waddell et al. measured which cellular processes and pathways were inhibited by A-485 with a simple RNA-seq experiment across 3 different melanoma cell lines. They found the most common processes downregulated in melanomas by A-485 were related to cellular differentiation, adhesion, proliferation, development, and motility. They also performed a SOX10 knockdown RNA-seq to determine which genes are downstream of SOX10 regulation, and searched the first RNA-seq dataset for the genes identified in the SOX10 KD dataset. The majority of gene activity regulated by SOX10 was repressed when A-485 was present. This demonstrates that A-485 inhibition of p300 is a possible candidate for a therapy on melanomas induced by SOX10.</p>
+        <p>My goal is to verify what the authors found in the RNA-seq portion of their paper. I was able to get their RNA-seq data from the 3 cell lines with A-485 treatment, but I don’t have the data from the SOX10 knockdown, meaning I don’t have a list of the genes regulated by SOX10 to see how they’re affected by presence of A-485. What I’m able to do is determine the biological processes of genes most affected by A-485 with gene ontology (GO) analysis and compare those results to what they found in the paper (cellular differentiation, adhesion, proliferation, development, and motility).</p>
+    
+        <h2 class="content-title">Quality Control and Model Selection</h2>
+        <p>In the RNA-seq dataset there are three cell lines, two treatments, and two replicates in for each totaling 12 samples. The cell lines are named A375 (UV-associated, and not related to the inhibitor A-485), IPC-298 (UV-associated), and CO79 (acral). The treatments are DMSO (control) and A-485 (p300 inhibitor). The data will be analyzed with DESeq2 in R. Because there are 3 different cell lines along with different treatments, there are a total of 6 different conditions in the dataset which should be accounted for when building a DESeq2 object. One way of accounting for both cell line and treatment is to just include each term separately in the DESeq object. This would assume that all genes are repressed or activated in the same way across cell lines. The other way is to include interaction between the two terms, which would assume genes are repressed and activated in different ways between cell lines when exposed to A-485. </p>
+        <p>For each model we’ll do some quality control to double check that biology and treatments are primarily driving variance between samples, then also quickly see how many genes are being differentially expressed across all samples. </p>
+        
+        <figure class="content-figure">
+            <img src="melanoma_images/pca1.png" alt="Model 1 PCA plot">
+            <figcaption>Figure 1. PCA plot of first DESeq2 model. PC1 explains 60% of variance in the data, PC2 explains 30% of variance. Cell lines all cluster together, and treatments cluster together within cell lines.</figcaption>
+        </figure>
+
+        <figure class="content-figure">
+            <img src="melanoma_images/MA.png" alt="Model 1 MA plot">
+            <figcaption>Figure 2. MA plot produced with standard plotMA() function in DESeq2. Quickly shows there are high counts of differentially expressed genes across the dataset. Genes colored blue are considered significant.</figcaption>
+        </figure>
+
+        <p>The PCA plots shows that common cell lines are clustering together and treatment replicates within cell lines are also clustering together, meaning the underlying biology is what’s driving variance between gene expression. The MA plot shows there are high counts of differentially expressed genes across all samples. Overall this is very good, but interaction between cell line and treatment needs to be examined.</p>
+    
+        <figure class="content-figure">
+            <img src="melanoma_images/interaction_sig_hist.png" alt="Model 2 Significant Genes Histogram">
+            <figcaption>Figure 3. Histogram of significant genes in DESeq2 model with interaction between cell lines and treatment. Highest counts near p-value = 0.</figcaption>    
+        </figure>
+
+        <figure class="content-figure">
+            <img src="melanoma_images/top_counts.png" alt="Model 2 Significant Genes Change in Expression">
+            <figcaption>Figure 4. Most significant genes differentially expressed within cell lines. Non-parallel lines show difference in cell line expression. A375 differential expression patterns are different from CO79 and IPC-298.</figcaption>
+        </figure>
+    
+        <p>After making the interaction model in DESeq2, I plotted a histogram of p-values for genes across the model. As there’s a big spike near 0, the interaction model is likely the better choice because the vast majority of differentially expressed genes it contains are extremely significant. Another quick illustration is plotting expression levels of individual genes in each cell line and treatment. The changes in expression between cell lines are NOT parallel, meaning changes in expression between control and treatment do not operate the same way in each cell line. so the interaction model is a good choice to continue with for the remainder of the analysis.</p>
+    
+        <figure class="content-figure">
+            <img src="melanoma_images/pca_int.png" alt="Model 2 PCA Plot">
+            <figcaption>Figure 5. PCA Plot of interaction DESeq2 model. Samples still cluster on cell line and treatment. PC1 explains 59% of variation and PC2 explains 28% of variation.</figcaption>    
+        </figure>
+
+        <figure class="content-figure">
+            <img src="melanoma_images/top_50_heatmap.png" alt="Top 50 variable genes heatmap">
+            <figcaption>Figure 6. QC heatmap of the change in expression of top 50 variable genes across all samples. All DMSO should be at or near 0 since that’s what each gene’s change is being compared to. CO79 and IPC-298 have similar expression profiles to each other. </figcaption>    
+        </figure>
+
+        <figure class="content-figure">
+            <img src="melanoma_images/distances_heatmap.png" alt="Distances heatmap">
+            <figcaption>Figure 7. QC Euclidean distance heatmap of each sample. Common cell lines have smallest distances between each other. </figcaption>
+        </figure>
+        
+        <p>The PCA plot of the interaction model also shows biology driving variance, and the QC heatmap of the top 50 variable genes shows different differential expression profiles between each cell line. The distance heatmap is what we expect given the PCA and QC heatmap. Samples from the same cell line are close to each other, and within cell lines samples with the same treatments are close to each other. Because the interaction model is significant and shown to be high quality, we’ll continue using it for the rest of analysis for determining which biological processes are most affected by p300 inhibition with A-485.</p>
+    
+    
+    
+        <h2 class="content-title">RNA-seq Analysis and Validation</h2>
+        <p>Waddell et al. made 2 different RNA-seq datasets: one tested the effects of A-485 on transcription, another called differentially expressed genes (DEGs) of SOX10 knockdown to identify downstream targets of SOX10. They used the two datasets in tandem to determine which genes downstream of SOX10 are regulated by p300 inhibition from A-485. The problem is I don’t have the second SOX10 KD dataset, I only have the set that tests the effects of A-485 on gene regulation. I won’t be able to see which SOX10 targets are affected by A-485 but I can still find the overall biological processes and pathways affected by A-485 through GO analysis, the results of which I can compare to the findings of Waddell et al.</p>
+        
+        <figure class="content-figure content-figure-multi--three">
+            <div class="figure-grid">
+                <img src="melanoma_images/vol_A375.png" alt="A375 volcano plot">
+                <img src="melanoma_images/vol_CO79.png" alt="CO79 volcano plot">
+                <img src="melanoma_images/vol_IPC.png" alt="IPC-298 volcano plot">
+            </div>
+            <figcaption>Figure 8. Volcano plots of significant DEGs in A375, CO79, and IPC-298 when treated with A485. Each has at least twice as many repressed genes than activated genes. </figcaption>
+        </figure>
+
+        <p>Significant genes have both absolute value log2 fold-change greater than .5 and -log10 P-adjusted greater than 0. The shrunken log2 fold-change is used to limit the effects of genes that would appear significant but simply have low counts and high variability (2 counts in 1 sample and 0 in all others for example). In all three cell lines the majority of significant DEGs are repressed rather than activated, which is what we expect because Waddell et al. had the same result and A-485 is inhibiting transcription factor activity in p300 and SOX10. </p>
+        
+        <figure class="content-figure content-figure-multi">
+            <div class="figure-grid">
+                <img src="melanoma_images/top_20_heatmap.png" alt="Top 20 DEGs each cell line">
+                <img src="melanoma_images/top_50_interaction_heatmap.png" alt="Top 50 DEGs across cell lines">
+                <img src="melanoma_images/selected_genes_heatmap.png" alt="Differential expression of genes named in paper">
+                <img src="melanoma_images/spec_genes_DEG.png" alt="Change in expressin of selected genes">
+            </div>
+            <figcaption>Figure 9. A) Top 20 most significant genes from within each cell line and log2-FC, each cell line’s top-20 is also shown for the other cell lines. B) Top 50 most significant DEGs across cell lines, A375 is driving most differential expression. C) Differential expression of genes specifically pointed out in the paper. Most notable are MITF, DCT, and EP300, which are mentioned throughout. D) Change in expression of the specified genes from the paper for each cell line.</figcaption>
+        </figure>
+        
+        <p>Figures 9A and 9B show top genes repressed/activated within each cell line (relative to their DMSO samples) and across cell lines (interaction). Just a snapshot of the expression profiles. Top differential genes across cell lines. As noted during QC, CO79 and IPC-298 have very similar expression profiles and A-375 does not.</p>
+        <p>Figures 9C and 9D show differential expression profiles of specific genes that were pointed out in the paper by Waddell et al. <i>MITF</i> and <i>DCT</i> (noted in paper to keep an eye on them) are repressed in all three cell lines. <i>EP300</i> (codes for p300) transcription actually increases, which may make sense because it’s activity is being limited by A-485. There may be a cellular feedback loop to try to produce more p300 when its activity is limited.</p>
+        
+        
+        <figure class="content-figure">
+            <img src="melanoma_images/hallmark_GO.png" alt="Repressed Hallmark GO terms">
+            <figcaption>Figure 10. Biological processes gene ontology of most significant repressed DEGs from Hallmark. Count is the number of repressed genes related to the given biological process, and gene ratio is the proportion of a cell line’s total DEGs that are part of the process (i.e. 12.5% of all DEGs in A375 are part of extracellular matrix organization).</figcaption>
+        </figure>
+
+
+        <p>The final goal of this analysis is to determine if the GO terms found repressed in Waddell et al.’s paper can match with repressed GO terms I can find myself. As noted, most biological processes repressed by A-485 in the paper were cell development, proliferation, adhesion, differentiation, and motility. Looking at the top 5 biological processes of repressed genes in each cell line the most apparent themes are replication, growth/development, and adhesion. This is consistent with the results found in the paper, verifying the GO analysis performed from their RNA-seq data. </p>
+        
+        <h2 class="content-title">Conclusion</h2>
+        <p>A-485 represses genes in melanomas related to development, growth, and adhesion—all essential for cancerous cells to spread and replicate. Whether or not it can be used to treat actual melanomas remains to be seen. It’s noted that the different cell don’t respond in exactly the same way to A-485 treatment, which can make it difficult to use if a particular type of melanoma is less affected by A-485 than others. In a situation where A-485 can’t be realistically used as a melanoma treatment, the process of identifying an indirect inhibitor of the SOX10 pathway is what can lead to finding a more potent therapy. Waddell et al. have demonstrated that their methods of discovering inhibitors of cancerous cellular systems are beneficial, and if more inhibitors of such pathways can be found then multiple can be used in conjunction to provide strong therapeutics that target melanomas from multiple angles of their propagation pathways. </p>
+    
+        
+       
+        
+
+        <div class="pill-links">
+            <a class="pill-link" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11293458/#_ad93_"><i>p300 KAT Regulates SOX10 Stability and Function in Human Melanoma</i> by Waddell et al.</a>
+            <a class="pill-link" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE254326">RNA-seq Datasets</a>
+        </div>    
+
+    </main>
+
+
+
+
+
+<div class="code-link">
+  <a href="melanoma_code.html" target="_blank" rel="noopener">
+    <span class="code-link-title">Melanoma RNA-seq Code</span>
+  </a>
+</div>
+
+<script src="lightbox.js"></script>
+</body> 
