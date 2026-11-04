@@ -1,5 +1,5 @@
 
-function cycleFonts(el, fonts, interval = 900) {
+function cycleFonts(el, fonts, interval = 700) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   let i = 0;
